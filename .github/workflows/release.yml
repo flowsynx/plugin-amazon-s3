@@ -58,4 +58,4 @@ jobs:
         artifacts: release-${{ inputs.rel_version }}.zip, release-${{ inputs.rel_version }}.zip.sha256
         body: "This is the v${{ inputs.rel_version }} release of Amazon S3 Storage for FlowSynx System."
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
