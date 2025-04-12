@@ -47,8 +47,8 @@ jobs:
       run: |
           cd publish_output
           release_name="release-${{ inputs.rel_version }}"
-          zip -r ../${release_name}.zip .
-          sha256sum ../${release_name}.zip > ../${release_name}.zip.sha256
+          zip -r ${release_name}.zip .
+          sha256sum ${release_name}.zip > ${release_name}.zip.sha256
 
     - name: Create GitHub Release and Upload Artifacts
       uses: ncipollo/release-action@v1
