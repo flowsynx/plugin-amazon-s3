@@ -1,0 +1,62 @@
+name: Build, create, and release
+
+on:      
+  workflow_dispatch:
+    inputs:
+      rel_version:
+        description: 'Release version (examples: 1.9.0-rc.1, 1.9.1)'
+        required: true 
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest    
+    env:
+      ARTIFACT_DIR: ./release
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 #fetch-depth is needed for GitVersion
+
+    - name: Create Branch
+      uses: peterjgrainger/action-create-branch@v2.2.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      with:
+        branch: 'release-${{ inputs.rel_version }}'
+        sha: '${{ github.event.pull_request.head.sha }}'
+
+    #Build/pack the project
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3.2.0
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+        
+    - name: Build
+      run: dotnet build --configuration Release /p:Version='${{ inputs.rel_version }}' --no-restore
+
+    - name: Test
+      run: dotnet test --configuration Release /p:Version='${{ inputs.rel_version }}' --no-build
+
+    - name: Publish project
+      run: dotnet publish -c Release -o publish_output
+        
+    - name: Zip release and calculate SHA256 checksum
+      run: |
+          cd publish_output
+          release_name="release-${{ inputs.rel_version }}"
+          zip -r ../${release_name}.zip .
+          sha256sum ${release_name}.zip > ${release_name}.zip.sha256
+
+    - name: Create GitHub Release and Upload Artifacts
+      uses: ncipollo/release-action@v1
+      with:
+        tag: v${{ inputs.rel_version }}
+        name: Amazon S3 Plugin v${{ inputs.rel_version }}
+        artifacts: release-${{ inputs.rel_version }}.zip, release-${{ inputs.rel_version }}.zip.sha256
+        body: "This is the v${{ inputs.rel_version }} release of Amazon S3 Storage for FlowSynx System."
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
