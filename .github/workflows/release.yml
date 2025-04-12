@@ -41,14 +41,15 @@ jobs:
       run: dotnet test --configuration Release /p:Version='${{ inputs.rel_version }}' --no-build
 
     - name: Publish project
-      run: dotnet publish src/FlowSynx.Plugins.Amazon.S3.csproj -c Release -o ./publish
+      run: dotnet publish src/FlowSynx.Plugins.Amazon.S3.csproj -c Release -o "${{github.workspace}}/publish"
         
     - name: Zip the output files
       run: |
           mkdir -p "${{github.workspace}}/dist"
-          zip -r "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip" ./publish
+          cd "${{github.workspace}}/publish"
+          zip -r "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip" .
 
-    - name: Upload bineries
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: uploaded-artifacts
