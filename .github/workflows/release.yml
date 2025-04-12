@@ -41,16 +41,12 @@ jobs:
       run: dotnet test --configuration Release /p:Version='${{ inputs.rel_version }}' --no-build
 
     - name: Publish project
-      run: dotnet publish -c Release -o ./publish
+      run: dotnet publish src/FlowSynx.Plugins.Amazon.S3.csproj -c Release -o ./publish
         
     - name: Zip the output files
       run: |
           mkdir -p "${{github.workspace}}/dist"
           zip -r "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip" ./publish
-
-    - name: Generate SHA256 checksum for the zip file
-      run: |
-          sha256sum "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip" > "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip.sha256"
 
     - name: Upload bineries
       uses: actions/upload-artifact@v4
@@ -61,20 +57,24 @@ jobs:
   release:
     runs-on: ubuntu-latest
     needs: build
+    if: github.ref == 'refs/heads/master' # only run job if on the master branch
+    env:
+      ARTIFACT_DIR: ./downloaded-artifacts
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: uploaded-artifacts
-          path: ./downloaded-artifacts
+          path: ${{ env.ARTIFACT_DIR }}
 
+      - name: generate checksum files
+        run: cd ${ARTIFACT_DIR} && for i in *; do sha256sum -b $i > "$i.sha256"; done && cd -
+      
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ inputs.rel_version }}
           name: Amazon S3 Plugin v${{ inputs.rel_version }}
-          artifacts: |
-            ./downloaded-artifacts/release-${{ inputs.rel_version }}.zip
-            ./downloaded-artifacts/release-${{ inputs.rel_version }}.zip.sha256
+          artifacts: "**/*.*"
           body: "This is the v${{ inputs.rel_version }} release of Amazon S3 Storage for FlowSynx System."
           token: ${{ secrets.GH_TOKEN }}
