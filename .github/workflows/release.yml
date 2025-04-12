@@ -46,19 +46,38 @@ jobs:
     - name: Publish project
       run: dotnet publish -c Release -o ./publish
         
-    - name: Zip release and calculate SHA256 checksum
+    - name: Zip the output files
       run: |
-          mkdir -p dist
-          zip -r "dist/release-${{ env.VERSION }}.zip" ./publish
-          sha256sum dist/release-${{ env.VERSION }}.zip > dist/release-${{ env.VERSION }}.zip.sha256
+          mkdir -p "${{github.workspace}}/dist"
+          zip -r "${{github.workspace}}/dist/release-${{ env.VERSION }}.zip" ./publish
 
-    - name: Create GitHub Release and Upload Artifacts
-      uses: ncipollo/release-action@v1
+    - name: Generate SHA256 checksum for the zip file
+      run: |
+          sha256sum "${{github.workspace}}/dist/release-${{ env.VERSION }}.zip" > "${{github.workspace}}/dist/release-${{ env.VERSION }}.zip.sha256"
+
+    - name: Upload bineries
+      uses: actions/upload-artifact@v4
       with:
-        tag: v${{ env.VERSION }}
-        name: Amazon S3 Plugin v${{ env.VERSION }}
-        artifacts: |
-            "dist/*.zip"
-            "dist/*.zip.sha256"
-        body: "This is the v${{ env.VERSION }} release of Amazon S3 Storage for FlowSynx System."
-        token: ${{ secrets.GH_TOKEN }}
+        name: uploaded-artifacts
+        path: "${{github.workspace}}/dist"
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: uploaded-artifacts
+          path: ./downloaded-artifacts
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ env.VERSION }}
+          name: Amazon S3 Plugin v${{ env.VERSION }}
+          artifacts: |
+            ./downloaded-artifacts/release-${{ env.VERSION }}.zip
+            ./downloaded-artifacts/release-${{ env.VERSION }}.zip.sha256
+          body: "This is the v${{ env.VERSION }} release of Amazon S3 Storage for FlowSynx System."
+          token: ${{ secrets.GH_TOKEN }}
