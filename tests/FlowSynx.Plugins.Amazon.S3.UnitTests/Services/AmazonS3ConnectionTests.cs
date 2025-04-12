@@ -21,7 +21,7 @@ public class AmazonS3ConnectionTests
         // Arrange
         var specs = new AmazonS3Specifications
         {
-            AccessKey = null,
+            AccessKey = string.Empty,
             SecretKey = "secret"
         };
 
@@ -37,7 +37,7 @@ public class AmazonS3ConnectionTests
         var specs = new AmazonS3Specifications
         {
             AccessKey = "access",
-            SecretKey = null
+            SecretKey = string.Empty
         };
 
         // Act & Assert

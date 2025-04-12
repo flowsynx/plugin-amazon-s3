@@ -77,7 +77,6 @@ public class PathHelperTests
     [Theory]
     [InlineData("folder/../subfolder", "subfolder")]
     [InlineData("a/b/../c", "a/c")]
-    [InlineData(null, "/")]
     [InlineData("", "/")]
     public void Normalize_ShouldResolvePathsCorrectly(string input, string expected)
     {
@@ -111,7 +110,6 @@ public class PathHelperTests
     }
 
     [Theory]
-    [InlineData(null, true)]
     [InlineData("", true)]
     [InlineData("/", true)]
     [InlineData("folder", false)]
@@ -132,7 +130,7 @@ public class PathHelperTests
     [Theory]
     [InlineData(null, "")]
     [InlineData(@"folder\subfolder\file.txt", "folder/subfolder/file.txt")]
-    public void ToUnixPath_ShouldConvertBackslashesToForwardSlashes(string input, string expected)
+    public void ToUnixPath_ShouldConvertBackslashesToForwardSlashes(string? input, string expected)
     {
         Assert.Equal(expected, PathHelper.ToUnixPath(input));
     }

@@ -9,10 +9,10 @@ public class AmazonS3Connection : IAmazonS3Connection
 {
     public AmazonS3Client Connect(AmazonS3Specifications specifications)
     {
-        if (specifications.AccessKey == null)
+        if (string.IsNullOrEmpty(specifications.AccessKey))
             throw new ArgumentNullException(nameof(specifications.AccessKey));
 
-        if (specifications.SecretKey == null)
+        if (string.IsNullOrEmpty(specifications.SecretKey))
             throw new ArgumentNullException(nameof(specifications.SecretKey));
 
         var awsCredentials = string.IsNullOrEmpty(specifications.SessionToken)
