@@ -26,7 +26,6 @@ jobs:
         branch: 'release-${{ inputs.rel_version }}'
         sha: '${{ github.event.pull_request.head.sha }}'
 
-    #Build/pack the project
     - name: Setup .NET
       uses: actions/setup-dotnet@v3.2.0
       with:
@@ -49,7 +48,7 @@ jobs:
           cd publish_output
           release_name="release-${{ inputs.rel_version }}"
           zip -r ../${release_name}.zip .
-          sha256sum ${release_name}.zip > ${release_name}.zip.sha256
+          sha256sum ../${release_name}.zip > ../${release_name}.zip.sha256
 
     - name: Create GitHub Release and Upload Artifacts
       uses: ncipollo/release-action@v1
