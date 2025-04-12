@@ -47,7 +47,7 @@ jobs:
       run: |
           mkdir -p "${{github.workspace}}/dist"
           cd "${{github.workspace}}/publish"
-          zip -r "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip" .
+          7z a -tzip "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip" *
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
