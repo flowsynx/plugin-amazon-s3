@@ -58,7 +58,7 @@ jobs:
         tag: v${{ env.VERSION }}
         name: Amazon S3 Plugin v${{ env.VERSION }}
         artifacts: |
-            "dist/release-${{ env.VERSION }}.zip"
-            "dist/release-${{ env.VERSION }}.zip.sha256"
+            "dist/*.zip"
+            "dist/*.zip.sha256"
         body: "This is the v${{ env.VERSION }} release of Amazon S3 Storage for FlowSynx System."
         token: ${{ secrets.GH_TOKEN }}
