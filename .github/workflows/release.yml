@@ -18,15 +18,12 @@ jobs:
       with:
         fetch-depth: 0 #fetch-depth is needed for GitVersion
 
-    - name: Set version variable
-      run: echo "VERSION=${{ inputs.rel_version }}" >> $GITHUB_ENV  # Extract version from the tag
-      
     - name: Create Branch
       uses: peterjgrainger/action-create-branch@v2.2.0
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       with:
-        branch: 'release-${{ env.VERSION }}'
+        branch: 'release-${{ inputs.rel_version }}'
         sha: '${{ github.event.pull_request.head.sha }}'
 
     - name: Setup .NET
@@ -38,10 +35,10 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --configuration Release /p:Version='${{ env.VERSION }}' --no-restore
+      run: dotnet build --configuration Release /p:Version='${{ inputs.rel_version }}' --no-restore
 
     - name: Test
-      run: dotnet test --configuration Release /p:Version='${{ env.VERSION }}' --no-build
+      run: dotnet test --configuration Release /p:Version='${{ inputs.rel_version }}' --no-build
 
     - name: Publish project
       run: dotnet publish -c Release -o ./publish
@@ -49,11 +46,11 @@ jobs:
     - name: Zip the output files
       run: |
           mkdir -p "${{github.workspace}}/dist"
-          zip -r "${{github.workspace}}/dist/release-${{ env.VERSION }}.zip" ./publish
+          zip -r "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip" ./publish
 
     - name: Generate SHA256 checksum for the zip file
       run: |
-          sha256sum "${{github.workspace}}/dist/release-${{ env.VERSION }}.zip" > "${{github.workspace}}/dist/release-${{ env.VERSION }}.zip.sha256"
+          sha256sum "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip" > "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip.sha256"
 
     - name: Upload bineries
       uses: actions/upload-artifact@v4
@@ -74,10 +71,10 @@ jobs:
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          tag: v${{ env.VERSION }}
-          name: Amazon S3 Plugin v${{ env.VERSION }}
+          tag: v${{ inputs.rel_version }}
+          name: Amazon S3 Plugin v${{ inputs.rel_version }}
           artifacts: |
-            ./downloaded-artifacts/release-${{ env.VERSION }}.zip
-            ./downloaded-artifacts/release-${{ env.VERSION }}.zip.sha256
-          body: "This is the v${{ env.VERSION }} release of Amazon S3 Storage for FlowSynx System."
+            ./downloaded-artifacts/release-${{ inputs.rel_version }}.zip
+            ./downloaded-artifacts/release-${{ inputs.rel_version }}.zip.sha256
+          body: "This is the v${{ inputs.rel_version }} release of Amazon S3 Storage for FlowSynx System."
           token: ${{ secrets.GH_TOKEN }}
