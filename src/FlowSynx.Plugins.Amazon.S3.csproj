@@ -13,7 +13,7 @@
 	
 	<ItemGroup>
 		<PackageReference Include="AWSSDK.S3" Version="3.7.310.3" />
-		<PackageReference Include="FlowSynx.PluginCore" Version="1.1.0" />
+		<PackageReference Include="FlowSynx.PluginCore" Version="1.2.0" />
 	</ItemGroup>
 	
 	<ItemGroup>
