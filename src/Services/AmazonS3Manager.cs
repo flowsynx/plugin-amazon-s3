@@ -73,6 +73,8 @@ public class AmazonS3Manager : IAmazonS3Manager
     #region internal methods
     private async Task CreateEntity(CreateParameters createParameters, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var path = PathHelper.ToUnixPath(createParameters.Path);
         if (string.IsNullOrEmpty(path))
             throw new Exception(Resources.TheSpecifiedPathMustBeNotEmpty);
@@ -99,6 +101,7 @@ public class AmazonS3Manager : IAmazonS3Manager
     {
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var bucketsResponse = await _client.ListBucketsAsync(cancellationToken);
             return bucketsResponse.Buckets.Any(x => x.BucketName == bucketName);
         }
@@ -110,6 +113,8 @@ public class AmazonS3Manager : IAmazonS3Manager
 
     private async Task AddFolder(string bucketName, string folderName, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (!folderName.EndsWith(PathHelper.PathSeparator))
             folderName += PathHelper.PathSeparator;
 
@@ -127,6 +132,8 @@ public class AmazonS3Manager : IAmazonS3Manager
 
     private async Task DeleteEntity(DeleteParameters deleteParameters, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var path = PathHelper.ToUnixPath(deleteParameters.Path);
         if (string.IsNullOrEmpty(path))
             throw new Exception(Resources.TheSpecifiedPathMustBeNotEmpty);
@@ -151,6 +158,8 @@ public class AmazonS3Manager : IAmazonS3Manager
 
     private async Task<bool> ExistEntity(string path, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         path = PathHelper.ToUnixPath(path);
         if (string.IsNullOrEmpty(path))
             throw new Exception(Resources.TheSpecifiedPathMustBeNotEmpty);
@@ -170,6 +179,8 @@ public class AmazonS3Manager : IAmazonS3Manager
     private async Task<IEnumerable<PluginContext>> ListEntities(ListParameters listParameters,
         CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var path = PathHelper.ToUnixPath(listParameters.Path);
 
         if (string.IsNullOrEmpty(path))
@@ -207,11 +218,15 @@ public class AmazonS3Manager : IAmazonS3Manager
 
         do
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var response = await _client.ListObjectsV2Async(request, cancellationToken).ConfigureAwait(false);
             continuationToken = response.NextContinuationToken;
 
             foreach (var obj in response.S3Objects)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 if (obj.Key.EndsWith(PathHelper.PathSeparator))
                     continue;
 
@@ -249,6 +264,8 @@ public class AmazonS3Manager : IAmazonS3Manager
 
     private async Task PurgeEntity(PurgeParameters purgeParameters, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var path = PathHelper.ToUnixPath(purgeParameters.Path);
         var folder = path;
         if (!folder.EndsWith(PathHelper.PathSeparator))
@@ -259,6 +276,8 @@ public class AmazonS3Manager : IAmazonS3Manager
 
     private async Task<PluginContext> ReadEntity(ReadParameters readParameters, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var path = PathHelper.ToUnixPath(readParameters.Path);
         if (string.IsNullOrEmpty(path))
             throw new Exception(Resources.TheSpecifiedPathMustBeNotEmpty);
@@ -282,6 +301,8 @@ public class AmazonS3Manager : IAmazonS3Manager
 
     private async Task WriteEntity(WriteParameters writeParameters, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var path = PathHelper.ToUnixPath(writeParameters.Path);
         if (string.IsNullOrEmpty(path))
             throw new Exception(Resources.TheSpecifiedPathMustBeNotEmpty);
@@ -337,6 +358,8 @@ public class AmazonS3Manager : IAmazonS3Manager
     private async Task WriteEntityFromContext(string path, PluginContext context, bool overwrite, 
         CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         byte[] dataToWrite;
 
         if (context.RawData is not null)
