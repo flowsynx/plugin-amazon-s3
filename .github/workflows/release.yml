@@ -1,81 +1,102 @@
-name: Build, create, and release
+name: Release plugin
 
-on:      
+on:
   workflow_dispatch:
     inputs:
       rel_version:
         description: 'Release version (examples: 1.9.0-rc.1, 1.9.1)'
-        required: true 
+        required: true
         type: string
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  ARTIFACT_DIR: ./release
+  PUBLISH_DIR: ${{ github.workspace }}/publish
+  DIST_DIR: ${{ github.workspace }}/dist
+  DOWNLOAD_DIR: ./downloaded-artifacts
 
 jobs:
   build:
-    runs-on: ubuntu-latest    
-    env:
-      ARTIFACT_DIR: ./release
+    runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0 #fetch-depth is needed for GitVersion
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-    - name: Create Branch
-      uses: peterjgrainger/action-create-branch@v2.2.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      with:
-        branch: 'release-${{ inputs.rel_version }}'
-        sha: '${{ github.event.pull_request.head.sha }}'
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3.2.0
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3.2.0
-      with:
-        dotnet-version: 9.0.x
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --configuration Release /p:Version='${{ inputs.rel_version }}' --no-restore
+      - name: Build solution
+        run: dotnet build --configuration Release /p:Version='${{ inputs.rel_version }}' --no-restore
 
-    - name: Test
-      run: dotnet test --configuration Release /p:Version='${{ inputs.rel_version }}' --no-build
+      - name: Run tests
+        run: dotnet test --configuration Release /p:Version='${{ inputs.rel_version }}' --no-build
 
-    - name: Publish project
-      run: dotnet publish src/FlowSynx.Plugins.Amazon.S3.csproj -c Release -o "${{github.workspace}}/publish"
-        
-    - name: Zip the output files
-      run: |
-          mkdir -p "${{github.workspace}}/dist"
-          cd "${{github.workspace}}/publish"
-          7z a -tzip "${{github.workspace}}/dist/release-${{ inputs.rel_version }}.zip" *
+      - name: Publish project
+        run: dotnet publish src/FlowSynx.Plugins.Amazon.S3.csproj -c Release -o "${{ env.PUBLISH_DIR }}"
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: uploaded-artifacts
-        path: "${{github.workspace}}/dist"
+      - name: Package release artifacts
+        run: |
+          mkdir -p "${{ env.DIST_DIR }}"
+          cd "${{ env.PUBLISH_DIR }}"
+          7z a -tzip "${{ env.DIST_DIR }}/release-${{ inputs.rel_version }}.zip" *
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: uploaded-artifacts
+          path: ${{ env.DIST_DIR }}
 
   release:
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/master' # only run job if on the master branch
-    env:
-      ARTIFACT_DIR: ./downloaded-artifacts
+    if: github.ref == 'refs/heads/master'
+
     steps:
-      - name: Download artifacts
+      - name: Download release artifacts
         uses: actions/download-artifact@v4
         with:
           name: uploaded-artifacts
-          path: ${{ env.ARTIFACT_DIR }}
+          path: ${{ env.DOWNLOAD_DIR }}
 
-      - name: generate checksum files
-        run: cd ${ARTIFACT_DIR} && for i in *; do sha256sum -b $i > "$i.sha256"; done && cd -
-      
+      - name: Generate SHA256 checksums
+        run: |
+          cd "${{ env.DOWNLOAD_DIR }}"
+          for file in *; do sha256sum -b "$file" > "$file.sha256"; done
+          cd -
+
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ inputs.rel_version }}
           name: Amazon S3 Plugin v${{ inputs.rel_version }}
-          artifacts: "**/*.*"
-          body: "This is the v${{ inputs.rel_version }} release of Amazon S3 Storage for FlowSynx System."
+          artifacts: "${{ env.DOWNLOAD_DIR }}/**/*.*"
+          body: |
+            This is the v${{ inputs.rel_version }} release of Amazon S3 Storage for FlowSynx System.
           token: ${{ secrets.GH_TOKEN }}
+
+  create-branch:
+    runs-on: ubuntu-latest
+    needs: [build, release]
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Create release branch
+        uses: peterjgrainger/action-create-branch@v2.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          branch: release-${{ inputs.rel_version }}
+          sha: ${{ github.sha }}
