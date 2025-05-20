@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FlowSynx.Plugins.Amazon.S3.Extensions;
 
-public static class ConverterExtensions
+internal static class ConverterExtensions
 {
     private const string MetaDataHeaderPrefix = "x-amz-meta-";
 

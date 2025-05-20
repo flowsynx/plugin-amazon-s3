@@ -3,7 +3,7 @@
 /// <summary>
 /// Path utilities
 /// </summary>
-public static class PathHelper
+internal static class PathHelper
 {
     /// <summary>
     /// Character used to split paths 

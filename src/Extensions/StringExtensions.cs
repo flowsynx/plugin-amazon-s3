@@ -2,7 +2,7 @@
 
 namespace FlowSynx.Plugins.Amazon.S3.Extensions;
 
-public static class StringExtensions
+internal static class StringExtensions
 {
     public static bool IsBase64String(this string value)
     {
