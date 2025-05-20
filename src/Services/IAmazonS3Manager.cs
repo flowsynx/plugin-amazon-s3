@@ -3,7 +3,7 @@ using FlowSynx.Plugins.Amazon.S3.Models;
 
 namespace FlowSynx.Plugins.Amazon.S3.Services;
 
-public interface IAmazonS3Manager
+internal interface IAmazonS3Manager
 {
     Task Create(PluginParameters parameters, CancellationToken cancellationToken);
     Task Delete(PluginParameters parameters, CancellationToken cancellationToken);

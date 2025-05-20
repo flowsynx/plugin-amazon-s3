@@ -2,6 +2,7 @@
 using FlowSynx.Plugins.Amazon.S3.Models;
 using FlowSynx.Plugins.Amazon.S3.Services;
 using FlowSynx.PluginCore.Extensions;
+using FlowSynx.PluginCore.Helpers;
 
 namespace FlowSynx.Plugins.Amazon.S3;
 
@@ -9,6 +10,7 @@ public class AmazonS3Plugin : IPlugin
 {
     private IAmazonS3Manager _manager = null!;
     private AmazonS3Specifications _s3Specifications = null!;
+    private bool _isInitialized;
 
     public PluginMetadata Metadata { 
         get
@@ -30,16 +32,26 @@ public class AmazonS3Plugin : IPlugin
 
     public Task Initialize(IPluginLogger logger)
     {
+        if (ReflectionHelper.IsCalledViaReflection())
+            throw new InvalidOperationException(Resources.ReflectionBasedAccessIsNotAllowed);
+
         ArgumentNullException.ThrowIfNull(logger);
         var connection = new AmazonS3Connection();
         _s3Specifications = Specifications.ToObject<AmazonS3Specifications>();
         var client = connection.Connect(_s3Specifications);
         _manager = new AmazonS3Manager(logger, client, _s3Specifications.Bucket);
+        _isInitialized = true;
         return Task.CompletedTask;
     }
 
     public async Task<object?> ExecuteAsync(PluginParameters parameters, CancellationToken cancellationToken)
     {
+        if (ReflectionHelper.IsCalledViaReflection())
+            throw new InvalidOperationException(Resources.ReflectionBasedAccessIsNotAllowed);
+
+        if (!_isInitialized)
+            throw new InvalidOperationException($"Plugin '{Metadata.Name}' v{Metadata.Version} is not initialized.");
+
         var operationParameter = parameters.ToObject<OperationParameter>();
         var operation = operationParameter.Operation;
 

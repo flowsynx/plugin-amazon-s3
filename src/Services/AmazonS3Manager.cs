@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace FlowSynx.Plugins.Amazon.S3.Services;
 
-public class AmazonS3Manager : IAmazonS3Manager
+internal class AmazonS3Manager : IAmazonS3Manager
 {
     private readonly IPluginLogger _logger;
     private readonly AmazonS3Client _client;

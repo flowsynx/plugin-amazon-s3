@@ -1,11 +1,12 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using FlowSynx.PluginCore.Helpers;
 using FlowSynx.Plugins.Amazon.S3.Models;
 
 namespace FlowSynx.Plugins.Amazon.S3.Services;
 
-public class AmazonS3Connection : IAmazonS3Connection
+internal class AmazonS3Connection : IAmazonS3Connection
 {
     public AmazonS3Client Connect(AmazonS3Specifications specifications)
     {

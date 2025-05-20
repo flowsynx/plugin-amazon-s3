@@ -132,6 +132,9 @@
   <data name="NoFilesFoundWithTheGivenFilter" xml:space="preserve">
     <value>No files found with the given filter in '{0}'.</value>
   </data>
+  <data name="ReflectionBasedAccessIsNotAllowed" xml:space="preserve">
+    <value>Reflection-based access is not allowed.</value>
+  </data>
   <data name="ResourceNotExist" xml:space="preserve">
     <value>Resource '{0}' not exist!</value>
   </data>
