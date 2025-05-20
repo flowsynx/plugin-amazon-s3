@@ -46,7 +46,7 @@ jobs:
         run: |
           mkdir -p "${{ env.DIST_DIR }}"
           cd "${{ env.PUBLISH_DIR }}"
-          7z a -tzip "${{ env.DIST_DIR }}/release-${{ inputs.rel_version }}.zip" *
+          7z a -tzip "${{ env.DIST_DIR }}/flowsynx.amazon.s3.${{ inputs.rel_version }}.zip" *
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
