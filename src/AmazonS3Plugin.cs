@@ -19,10 +19,13 @@ public class AmazonS3Plugin : IPlugin
             {
                 Id = Guid.Parse("b961131b-04cb-48df-9554-4252dc66c04c"),
                 Name = "Amazon.S3",
+                CompanyName = "FlowSynx",
                 Description = Resources.ConnectorDescription,
                 Version = new PluginVersion(1, 0, 0),
                 Namespace = PluginNamespace.Connectors,
-                Author = "FlowSynx LLC."
+                Authors = new List<string> { "FlowSynx" },
+                Copyright = "© FlowSynx. All rights reserved.",
+                Tags = new List<string>() { "FlowSynx", "Amazon", "S3", "Cloud" }
             };
         }
     }
