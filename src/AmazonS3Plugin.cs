@@ -21,13 +21,14 @@ public class AmazonS3Plugin : IPlugin
                 Name = "Amazon.S3",
                 CompanyName = "FlowSynx",
                 Description = Resources.ConnectorDescription,
-                Version = new PluginVersion(1, 0, 0),
+                Version = new PluginVersion(1, 1, 0),
                 Namespace = PluginNamespace.Connectors,
                 Authors = new List<string> { "FlowSynx" },
                 Copyright = "© FlowSynx. All rights reserved.",
                 Icon = "flowsynx.png",
                 ReadMe = "README.md",
                 RepositoryUrl = "https://github.com/flowsynx/plugin-amazon-s3",
+                ProjectUrl = "https://flowsynx.io",
                 Tags = new List<string>() { "FlowSynx", "Amazon", "S3", "Cloud" }
             };
         }
