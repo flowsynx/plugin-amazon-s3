@@ -1,12 +1,5 @@
 # Amazon S3 Plugin – FlowSynx Platform Integration
 
-**Version:** 1.0.0  
-**Author:** FlowSynx  
-**License:** © FlowSynx. All rights reserved.  
-**Repository:** [github.com/flowsynx/plugin-amazon-s3](https://github.com/flowsynx/plugin-amazon-s3)
-
-## Overview
-
 The **Amazon S3 Plugin** is a pre-packaged, plug-and-play integration component for the FlowSynx engine. It enables secure and configurable access to Amazon S3 cloud storage as part of FlowSynx’s no-code/low-code automation workflows.
 
 This plugin can be installed automatically by the FlowSynx engine when selected within the platform. It is not intended for manual installation or developer use outside the FlowSynx environment.
@@ -32,21 +25,6 @@ The plugin supports the following operations, which can be selected and configur
 | `purge`  | Remove all contents in the bucket.    |
 | `read`   | Read and return the contents of an object. |
 | `write`  | Overwrite or write new data to an object. |
-
----
-
-## Plugin Metadata
-
-| Field         | Value                                           |
-|---------------|-------------------------------------------------|
-| Plugin ID     | `b961131b-04cb-48df-9554-4252dc66c04c`          |
-| Name          | `Amazon.S3`                                     |
-| Company       | `FlowSynx`                                      |
-| Namespace     | `Connectors`                                    |
-| Version       | `1.0.0`                                         |
-| Authors       | `FlowSynx`                                      |
-| Tags          | `FlowSynx`, `Amazon`, `S3`, `Cloud`             |
-| License       | © FlowSynx. All rights reserved.                |
 
 ---
 
