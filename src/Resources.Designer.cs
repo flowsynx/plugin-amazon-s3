@@ -61,15 +61,6 @@ namespace FlowSynx.Plugins.Amazon.S3 {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connector for managing Amazon Web Service S3 Storage system..
-        /// </summary>
-        internal static string ConnectorDescription {
-            get {
-                return ResourceManager.GetString("ConnectorDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Copy operation for file &apos;{0} could not proceed!.
         /// </summary>
         internal static string CopyOperationCouldNotBeProceed {
@@ -102,6 +93,15 @@ namespace FlowSynx.Plugins.Amazon.S3 {
         internal static string NoFilesFoundWithTheGivenFilter {
             get {
                 return ResourceManager.GetString("NoFilesFoundWithTheGivenFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interacts with Amazon S3 for file storage and retrieval. Supports bucket operations, object listing, file uploads, and downloads..
+        /// </summary>
+        internal static string PluginDescription {
+            get {
+                return ResourceManager.GetString("PluginDescription", resourceCulture);
             }
         }
         

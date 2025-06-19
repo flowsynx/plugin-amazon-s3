@@ -20,7 +20,7 @@ public class AmazonS3Plugin : IPlugin
                 Id = Guid.Parse("b961131b-04cb-48df-9554-4252dc66c04c"),
                 Name = "Amazon.S3",
                 CompanyName = "FlowSynx",
-                Description = Resources.ConnectorDescription,
+                Description = Resources.PluginDescription,
                 Version = new PluginVersion(1, 1, 0),
                 Namespace = PluginNamespace.Connectors,
                 Authors = new List<string> { "FlowSynx" },
@@ -29,7 +29,8 @@ public class AmazonS3Plugin : IPlugin
                 ReadMe = "README.md",
                 RepositoryUrl = "https://github.com/flowsynx/plugin-amazon-s3",
                 ProjectUrl = "https://flowsynx.io",
-                Tags = new List<string>() { "FlowSynx", "Amazon", "S3", "Cloud" }
+                Tags = new List<string>() { "FlowSynx", "Amazon", "S3", "Cloud" },
+                Category = PluginCategories.CloudPlatform
             };
         }
     }
