@@ -30,7 +30,7 @@ public class AmazonS3Plugin : IPlugin
                 RepositoryUrl = "https://github.com/flowsynx/plugin-amazon-s3",
                 ProjectUrl = "https://flowsynx.io",
                 Tags = new List<string>() { "FlowSynx", "Amazon", "S3", "Cloud" },
-                MinimumFlowSynxVersion = new Version(1, 1, 0),
+                MinimumFlowSynxVersion = new Version(1, 1, 1),
             };
         }
     }
